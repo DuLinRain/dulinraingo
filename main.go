@@ -2,6 +2,7 @@ package main
 import (
   "net/http"
   "os"
+  "log"
 )
 func main() {
   port := os.Getenv("PORT")
