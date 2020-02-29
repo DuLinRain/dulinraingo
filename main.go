@@ -17,7 +17,7 @@ package main
 
 import (
 	"fmt"
-	"log"
+	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -26,15 +26,24 @@ import (
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
-		log.Fatal("$PORT must be set")
+		// log.Fatal("$PORT must be set")
+		port = "3333"
 	}
-	r := gin.Default() // r实际上是route的缩写
-	r.GET("/ping", func(c *gin.Context) {
-		var name string = c.Query("name")
+	router := gin.Default()        // r实际上是route的缩写
+	router.LoadHTMLGlob("views/*") // glob模式
+	//router.LoadHTMLFiles("templates/template1.html", "templates/template2.html") //单文件模式
+	router.GET("/", func(ctx *gin.Context) {
+		ctx.HTML(http.StatusOK, "index.html", gin.H{
+			"title": "Main website",
+		})
+	})
+	router.GET("/ping", func(ctx *gin.Context) {
+		var name string = ctx.Query("name")
 		fmt.Println(name)
-		c.JSON(200, gin.H{
+		ctx.JSON(200, gin.H{
 			"message": "pong",
 		})
 	})
-	r.Run(":" + port) // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	// port = "3333"
+	router.Run(":" + port) // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
